@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Панель статуса проекта</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/custom.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="#metrics">Панель статуса проекта</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainMenu" aria-controls="mainMenu" aria-expanded="false" aria-label="Открыть меню">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="mainMenu">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item"><a class="nav-link" href="#metrics">Показатели</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#operations">Операции</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#statistics">Статистика</a></li>
+                </ul>
+                <button class="btn btn-outline-light btn-sm me-3" type="button" data-bs-toggle="offcanvas" data-bs-target="#notificationsPanel" aria-controls="notificationsPanel">
+                    Уведомления
+                </button>
+                <div class="d-flex align-items-center text-white mt-2 mt-lg-0">
+                    <img src="images/avatar.svg" alt="Аватар пользователя" class="avatar rounded-circle me-2">
+                    <span>Студент</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container py-4">
+        <div id="errorMessage" class="alert alert-danger d-none" role="alert">
+            Не удалось загрузить данные из папки data. Запустите проект через локальный сервер, как указано в README.
+        </div>
+
+        <section id="metrics" class="mb-4">
+            <h1 class="h3 mb-3">Показатели</h1>
+            <div class="row g-3" id="metricsList"></div>
+        </section>
+
+        <div class="row g-4">
+            <section id="operations" class="col-12 col-lg-8">
+                <div class="card">
+                    <div class="card-header d-flex flex-wrap justify-content-between align-items-center gap-2">
+                        <h2 class="h5 mb-0">
+                            Последние операции
+                            <span class="badge text-bg-secondary" id="operationsCounter">0</span>
+                        </h2>
+                        <div class="d-flex gap-2">
+                            <button type="button" class="btn btn-outline-secondary btn-sm" id="filterButton">Только новые</button>
+                            <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addModal">Добавить операцию</button>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead>
+                                <tr>
+                                    <th scope="col">№</th>
+                                    <th scope="col">Операция</th>
+                                    <th scope="col">Статус</th>
+                                </tr>
+                            </thead>
+                            <tbody id="operationsTable"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <section id="statistics" class="col-12 col-lg-4">
+                <div class="card">
+                    <img src="images/chart.svg" class="card-img-top chart-image" alt="График выполнения проекта">
+                    <div class="card-body">
+                        <h2 class="card-title h5">Статистика</h2>
+                        <p class="card-text text-muted">Сводка по операциям проекта. Подробные уведомления открываются кнопкой «Уведомления» в меню.</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="notificationsPanel" aria-labelledby="notificationsTitle">
+        <div class="offcanvas-header">
+            <h2 class="offcanvas-title h5" id="notificationsTitle">Уведомления</h2>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Закрыть"></button>
+        </div>
+        <div class="offcanvas-body" id="notificationsList"></div>
+    </div>
+
+    <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalTitle" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form id="addForm" novalidate>
+                    <div class="modal-header">
+                        <h2 class="modal-title h5" id="addModalTitle">Новая операция</h2>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="operationName" class="form-label">Название операции</label>
+                            <input type="text" class="form-control" id="operationName" minlength="3" maxlength="50" required aria-describedby="operationNameHint">
+                            <div class="form-text" id="operationNameHint">От 3 до 50 символов.</div>
+                            <div class="invalid-feedback">Введите название не короче 3 символов.</div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="operationStatus" class="form-label">Статус</label>
+                            <select class="form-select" id="operationStatus" aria-describedby="operationStatusHint">
+                                <option value="Новая">Новая</option>
+                                <option value="В работе">В работе</option>
+                                <option value="Готово">Готово</option>
+                            </select>
+                            <div class="form-text" id="operationStatusHint">Новая операция по умолчанию получает статус «Новая».</div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                        <button type="submit" class="btn btn-primary">Сохранить</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div id="resultToast" class="toast align-items-center border-0" role="status" aria-live="polite" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body" id="toastText"></div>
+                <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Закрыть"></button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
